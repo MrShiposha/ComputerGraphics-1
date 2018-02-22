@@ -71,9 +71,15 @@
             <connections>
                 <outlet property="about_window" destination="Ue0-JT-Cpo" id="gBL-7d-532"/>
                 <outlet property="image_view" destination="Al7-XR-xIc" id="yMP-1i-f3J"/>
+                <outlet property="point_select" destination="Mwz-dT-X4s" id="WTU-a8-3a8"/>
+                <outlet property="point_selector" destination="Mwz-dT-X4s" id="ZlC-ev-Kls"/>
                 <outlet property="preferences_window" destination="cD9-Es-E50" id="CEc-d1-VDd"/>
+                <outlet property="remove_point" destination="DS9-G8-K6F" id="tWP-Ru-Ym1"/>
                 <outlet property="window" destination="yRV-Hd-MBV" id="SmM-kB-TaF"/>
+                <outlet property="x_field_change" destination="tb7-sp-Av2" id="asI-Jw-KfI"/>
+                <outlet property="x_field_move" destination="tb7-sp-Av2" id="5Jw-4U-biL"/>
                 <outlet property="x_field_new" destination="Eh8-Z5-M9e" id="pHL-T1-rHo"/>
+                <outlet property="y_field_change" destination="sSR-q7-JOe" id="KIr-3k-prO"/>
                 <outlet property="y_field_new" destination="4Aa-we-HDY" id="NAm-h0-sr5"/>
             </connections>
         </customObject>
@@ -99,30 +105,36 @@
         <window title="Настройки" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" frameAutosaveName="" animationBehavior="default" id="cD9-Es-E50" userLabel="Setting" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" utility="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="640" y="400" width="340" height="173"/>
+            <rect key="contentRect" x="640" y="400" width="340" height="241"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1280" height="778"/>
             <view key="contentView" id="c2A-IN-tvB">
-                <rect key="frame" x="0.0" y="0.0" width="340" height="173"/>
+                <rect key="frame" x="0.0" y="0.0" width="340" height="241"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DS9-G8-K6F">
-                        <rect key="frame" x="14" y="13" width="183" height="32"/>
+                        <rect key="frame" x="14" y="75" width="183" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="push" title="Удалить точку" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ggp-Ag-5oq">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
                         </buttonCell>
+                        <connections>
+                            <action selector="remove_point:" target="494" id="pHB-It-33m"/>
+                        </connections>
                     </button>
                     <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JS6-CY-LKI">
-                        <rect key="frame" x="14" y="40" width="183" height="32"/>
+                        <rect key="frame" x="14" y="108" width="183" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="push" title="Изменить координаты" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Jre-IN-oz6">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
                         </buttonCell>
+                        <connections>
+                            <action selector="change_point:" target="494" id="k4W-Y1-l15"/>
+                        </connections>
                     </button>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Eh8-Z5-M9e">
-                        <rect key="frame" x="216" y="131" width="32" height="22"/>
+                        <rect key="frame" x="216" y="199" width="32" height="22"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="sSG-OL-l8G">
                             <numberFormatter key="formatter" formatterBehavior="default10_4" numberStyle="decimal" minimumIntegerDigits="1" maximumIntegerDigits="2000000000" maximumFractionDigits="3" id="mZw-OT-4Ci"/>
@@ -132,7 +144,7 @@
                         </textFieldCell>
                     </textField>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4Aa-we-HDY">
-                        <rect key="frame" x="279" y="131" width="32" height="22"/>
+                        <rect key="frame" x="279" y="199" width="32" height="22"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="PSW-qQ-6if">
                             <numberFormatter key="formatter" formatterBehavior="default10_4" numberStyle="decimal" minimumIntegerDigits="1" maximumIntegerDigits="2000000000" maximumFractionDigits="3" id="IIn-k7-fqG"/>
@@ -142,7 +154,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OBN-DO-paE">
-                        <rect key="frame" x="197" y="133" width="13" height="17"/>
+                        <rect key="frame" x="197" y="201" width="13" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="X" id="0cj-e5-ieK">
                             <font key="font" metaFont="system"/>
@@ -151,7 +163,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CTg-rN-QNr">
-                        <rect key="frame" x="260" y="134" width="13" height="17"/>
+                        <rect key="frame" x="260" y="202" width="13" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Y" id="KWP-h3-LhR">
                             <font key="font" metaFont="system"/>
@@ -160,7 +172,7 @@
                         </textFieldCell>
                     </textField>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tb7-sp-Av2">
-                        <rect key="frame" x="216" y="47" width="32" height="22"/>
+                        <rect key="frame" x="216" y="115" width="32" height="22"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="fQl-Hb-MRr">
                             <numberFormatter key="formatter" formatterBehavior="default10_4" numberStyle="decimal" minimumIntegerDigits="1" maximumIntegerDigits="2000000000" maximumFractionDigits="3" id="L23-Gk-qXZ"/>
@@ -170,7 +182,7 @@
                         </textFieldCell>
                     </textField>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="sSR-q7-JOe">
-                        <rect key="frame" x="279" y="47" width="32" height="22"/>
+                        <rect key="frame" x="279" y="115" width="32" height="22"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="dr9-qv-Sow">
                             <numberFormatter key="formatter" formatterBehavior="default10_4" numberStyle="decimal" minimumIntegerDigits="1" maximumIntegerDigits="2000000000" maximumFractionDigits="3" id="el8-B7-1sS"/>
@@ -180,7 +192,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8dt-cX-dEM">
-                        <rect key="frame" x="197" y="49" width="13" height="17"/>
+                        <rect key="frame" x="197" y="117" width="13" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="X" id="1jh-Gf-aYQ">
                             <font key="font" metaFont="system"/>
@@ -189,7 +201,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="nTy-od-HYL">
-                        <rect key="frame" x="260" y="50" width="13" height="17"/>
+                        <rect key="frame" x="260" y="118" width="13" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Y" id="j1O-Ui-Jx2">
                             <font key="font" metaFont="system"/>
@@ -198,7 +210,7 @@
                         </textFieldCell>
                     </textField>
                     <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="afC-4a-TLJ">
-                        <rect key="frame" x="14" y="123" width="183" height="32"/>
+                        <rect key="frame" x="14" y="191" width="183" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="push" title="Добавить точку" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="EJQ-se-pNk">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -209,7 +221,7 @@
                         </connections>
                     </button>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6jx-Ei-8BC">
-                        <rect key="frame" x="18" y="84" width="121" height="17"/>
+                        <rect key="frame" x="18" y="152" width="121" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="left" title="Выбранная точка: " id="QU5-EH-ou0">
                             <font key="font" metaFont="system"/>
@@ -218,21 +230,39 @@
                         </textFieldCell>
                     </textField>
                     <box verticalHuggingPriority="750" fixedFrame="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="cnL-72-A5b">
-                        <rect key="frame" x="0.0" y="107" width="340" height="5"/>
+                        <rect key="frame" x="0.0" y="175" width="340" height="5"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    </box>
+                    <box verticalHuggingPriority="750" fixedFrame="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="wlV-Ah-T5d">
+                        <rect key="frame" x="0.0" y="59" width="340" height="5"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     </box>
                     <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Mwz-dT-X4s">
-                        <rect key="frame" x="133" y="79" width="61" height="26"/>
+                        <rect key="frame" x="133" y="147" width="61" height="26"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="ACh-JB-YCI">
                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="menu"/>
                             <menu key="menu" id="W3V-Ms-fKg"/>
                         </popUpButtonCell>
+                        <connections>
+                            <action selector="point_select:" target="494" id="HkJ-TS-Sbh"/>
+                        </connections>
                     </popUpButton>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Pm9-ue-Mbo">
+                        <rect key="frame" x="106" y="13" width="135" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="push" title="Решить задачу" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="9KH-Ol-CH3">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="solve:" target="494" id="w5S-nj-h70"/>
+                        </connections>
+                    </button>
                 </subviews>
             </view>
-            <point key="canvasLocation" x="-313" y="953.5"/>
+            <point key="canvasLocation" x="-313" y="987.5"/>
         </window>
         <menuItem title="File" id="MzE-RH-rvw">
             <modifierMask key="keyEquivalentModifierMask"/>

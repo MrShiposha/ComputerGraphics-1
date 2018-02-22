@@ -7,6 +7,12 @@ SET(SOURCES
     AppDelegate.h
     AppDelegate.mm
 
+    LabeledPoint.hpp
+    LabeledPoint.cpp
+
+    math.hpp
+    math.cpp
+
     main.mm
 
     MainMenu.xib

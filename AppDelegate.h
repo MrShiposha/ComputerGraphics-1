@@ -2,6 +2,7 @@
 #import <AppKit/NSTextField.h>
 #import <AppKit/NSPanel.h>
 #import <AppKit/NSImageView.h>
+#import <AppKit/NSPopUpButton.h>
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
 
@@ -21,5 +22,12 @@
 - (IBAction)show_about:(id)sender;
 
 - (IBAction)add_point:(id)sender;
+@property (assign) IBOutlet NSPopUpButton *point_selector;
+- (IBAction)remove_point:(id)sender;
+- (IBAction)change_point:(id)sender;
+@property (assign) IBOutlet NSTextField *x_field_change;
+@property (assign) IBOutlet NSTextField *y_field_change;
+- (IBAction)solve:(id)sender;
+- (IBAction)point_select:(id)sender;
 
 @end

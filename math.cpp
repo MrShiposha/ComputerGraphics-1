@@ -34,6 +34,23 @@ math::Vector2D bisectors_intersection_point(const graphics::Triangle &triangle)
     return math::Vector2D(x, y);
 }
 
+ginseng::graphics::Ring inscribed_circle(const ginseng::graphics::Triangle &triangle)
+{
+    auto bisects_intersection = bisectors_intersection_point(triangle);
+    auto side_1_vector = triangle.second_point() - triangle.first_point();
+    auto side_2_vector = triangle.third_point() - triangle.first_point();
+    
+    math::Line side_1(triangle.first_point(), side_1_vector);
+    
+    
+    double cos_angle = (side_1_vector).dot(side_2_vector) / (side_1_vector.length()*side_2_vector.length());
+    double sin_half_angle = sqrt((1 - cos_angle)/2);
+    
+    double radius = sin_half_angle*(bisects_intersection - triangle.first_point()).length();
+    
+    return graphics::Ring(bisects_intersection, radius);
+}
+
 std::tuple<graphics::Line, graphics::Line, graphics::Line>
 bisectors(const ginseng::graphics::Triangle &triangle)
 {
@@ -43,14 +60,13 @@ bisectors(const ginseng::graphics::Triangle &triangle)
     
     auto bisects_intersection = bisectors_intersection_point(triangle);
     
-    math::Line bisect_1(triangle.first_point(),  triangle.first_point()  - bisects_intersection);
-    math::Line bisect_2(triangle.second_point(), triangle.second_point() - bisects_intersection);
-    math::Line bisect_3(triangle.third_point(),  triangle.third_point()  - bisects_intersection);
+    math::Line bisect_1(triangle.first_point(),  bisects_intersection - triangle.first_point() );
+    math::Line bisect_2(triangle.second_point(), bisects_intersection - triangle.second_point());
+    math::Line bisect_3(triangle.third_point(),  bisects_intersection - triangle.third_point());
     
-    auto bisect_1_end = math::lines_intersection_point(bisect_1, side_2);
-    
-    auto bisect_2_end = math::lines_intersection_point(bisect_2, side_3);
-    auto bisect_3_end = math::lines_intersection_point(bisect_3, side_1);
+    auto bisect_1_end = math::lines_intersection_point(bisect_1, side_2).round();
+    auto bisect_2_end = math::lines_intersection_point(bisect_2, side_3).round();
+    auto bisect_3_end = math::lines_intersection_point(bisect_3, side_1).round();
     
     return std::make_tuple
     (

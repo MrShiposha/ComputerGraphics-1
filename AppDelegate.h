@@ -20,6 +20,13 @@
 
 - (IBAction)show_preferences:(id)sender;
 - (IBAction)show_about:(id)sender;
+@property (assign) IBOutlet NSButton *solve_button;
+@property (assign) IBOutlet NSButton *change_button;
+@property (assign) IBOutlet NSButton *remove_button;
+- (IBAction)clear_screen:(id)sender;
+- (IBAction)save:(id)sender;
+- (IBAction)load:(id)sender;
+@property (assign) IBOutlet NSButton *load_button;
 
 - (IBAction)add_point:(id)sender;
 @property (assign) IBOutlet NSPopUpButton *point_selector;

@@ -12,6 +12,8 @@
 
 ginseng::math::Vector2D bisectors_intersection_point(const ginseng::graphics::Triangle &triangle);
 
+ginseng::graphics::Ring inscribed_circle(const ginseng::graphics::Triangle &triangle);
+
 std::tuple<ginseng::graphics::Line, ginseng::graphics::Line, ginseng::graphics::Line>
 bisectors(const ginseng::graphics::Triangle &);
 

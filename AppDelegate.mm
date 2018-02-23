@@ -21,9 +21,11 @@ NSString *IMAGE_PATH = @"/Users/mrshiposha/Desktop/image.tga";
     NSImage *ns_image;
     image::TGA *image;
     std::map<size_t, LabeledPoint> point_map;
+    std::map<size_t, LabeledPoint> saved_map;
     
     Triangle *triangle;
     graphics::Line *min_bisector;
+    graphics::Ring *min_inscribed_circle;
     Cross *current_cursor;
     
     double kx, ky;
@@ -41,6 +43,8 @@ NSString *IMAGE_PATH = @"/Users/mrshiposha/Desktop/image.tga";
 
 - (void)error: (NSString*)message;
 
+- (void)set_changes_controls_enabled: (BOOL)is_enabled;
+
 @end
 
 @implementation AppDelegate
@@ -57,6 +61,7 @@ NSString *IMAGE_PATH = @"/Users/mrshiposha/Desktop/image.tga";
     
     triangle = nullptr;
     min_bisector = nullptr;
+    min_inscribed_circle = nullptr;
     current_cursor = nullptr;
     
     [self create_initial_image];
@@ -138,11 +143,16 @@ NSString *IMAGE_PATH = @"/Users/mrshiposha/Desktop/image.tga";
     }
     
     if(min_bisector)
+    {
         image->draw(*min_bisector, Color::rgba(0, 255, 255));
+        image->draw(*min_inscribed_circle, Color::rgba(0, 255, 255));
+        image->draw(graphics::Point(min_inscribed_circle->center()), Color::rgba(255, 255, 0));
+    }
     
     for(auto &&pair : point_map)
     {
         std::cout << "x: " << (pair.second.position().x() - offset_x)*kx + offset_x + padding << ", y: " << (pair.second.position().y() - offset_y)*ky + offset_y + padding << std::endl;
+        
         image->draw
         (
             LabeledPoint(pair.second)
@@ -159,7 +169,8 @@ NSString *IMAGE_PATH = @"/Users/mrshiposha/Desktop/image.tga";
     if(current_cursor)
     {
         std::cout << "CURRENT CURSOR" << std::endl;
-       image->draw(*current_cursor, Color::rgba(255, 0, 255));
+        image->draw(*current_cursor, Color::rgba(255, 255, 0));
+        image->draw(Ring(current_cursor->position(), current_cursor->size()), Color::rgba(255, 255, 0));
     }
     
     image->write([IMAGE_PATH UTF8String]);
@@ -175,6 +186,34 @@ NSString *IMAGE_PATH = @"/Users/mrshiposha/Desktop/image.tga";
 
 - (IBAction)show_about:(id)sender {
     [self.about_window makeKeyAndOrderFront:self];
+}
+
+- (IBAction)clear_screen:(id)sender {
+    point_map.clear();
+    [self set_changes_controls_enabled:NO];
+    [self.solve_button setEnabled:NO];
+    [self.point_selector removeAllItems];
+    [self update_image];
+}
+
+- (IBAction)save:(id)sender {
+    saved_map = point_map;
+    [self.load_button setEnabled:YES];
+}
+
+- (IBAction)load:(id)sender {
+    point_map = saved_map;
+    [self update_image];
+    
+    if(!point_map.empty())
+    {
+        for(auto &&pair : point_map)
+            [
+                self.point_selector addItemWithTitle:
+                [NSString stringWithUTF8String:std::to_string(pair.first).c_str()]
+            ];
+        [self set_changes_controls_enabled:YES];
+    }
 }
 
 - (IBAction)add_point:(id)sender {
@@ -210,6 +249,11 @@ NSString *IMAGE_PATH = @"/Users/mrshiposha/Desktop/image.tga";
     ++point_id;
     
     [self update_image];
+    
+    [self set_changes_controls_enabled:YES];
+    
+    if(point_map.size() < 3)
+        [self.solve_button setEnabled:NO];
 }
 
 - (void)error: (NSString*)message {
@@ -233,6 +277,12 @@ NSString *IMAGE_PATH = @"/Users/mrshiposha/Desktop/image.tga";
     
     point_map.erase([[[self.point_selector selectedItem] title] longLongValue]);
     [self.point_selector removeItemAtIndex:selected_index];
+    
+    if(point_map.empty())
+        [self set_changes_controls_enabled:NO];
+    
+    if(point_map.size() < 3)
+        [self.solve_button setEnabled:NO];
     
     [self update_image];
 }
@@ -328,14 +378,14 @@ NSString *IMAGE_PATH = @"/Users/mrshiposha/Desktop/image.tga";
 
     auto it = triangles.begin(), end = triangles.end(), min_it = triangles.begin();
 
-    graphics::Line min(get_max_bisector(bisectors(*it)));
-    graphics::Line current_bisector(min);
+    double min_length = get_max_bisector(bisectors(*it)).length();
+    double new_length = 0;
     for(++it; it != end; ++it)
     {
-        current_bisector = get_max_bisector(bisectors(*it));
-        if (current_bisector.length() < min.length())
+        new_length = get_max_bisector(bisectors(*it)).length();
+        if (new_length < min_length)
         {
-            min = current_bisector;
+            min_length = new_length;
             min_it = it;
         }
     }
@@ -362,26 +412,29 @@ NSString *IMAGE_PATH = @"/Users/mrshiposha/Desktop/image.tga";
         0
     });
     
+    triangle->first_point(triangle->first_point().rounded());
+    triangle->second_point(triangle->second_point().rounded());
+    triangle->third_point(triangle->third_point().rounded());
+    
+    
+    graphics::Line min(get_max_bisector(bisectors(*triangle)));
     min_bisector = &min;
-    min_bisector->first_point
-    ({
-        (min_bisector->first_point().x() - offset_x)*kx + offset_x + padding,
-        (min_bisector->first_point().y() - offset_y)*ky + offset_y + padding,
-        0
-    });
-    min_bisector->second_point
-    ({
-        (min_bisector->second_point().x() - offset_x)*kx + offset_x + padding,
-        (min_bisector->second_point().y() - offset_y)*ky + offset_y + padding,
-        0
-    });
+    
+    Ring ring(inscribed_circle(*triangle));
+    ring.center(ring.center().rounded());
+    
+    min_inscribed_circle = &ring;
     
     [self update_image];
     triangle = nullptr;
     min_bisector = nullptr;
+    min_inscribed_circle = nullptr;
 }
 
 - (IBAction)point_select:(id)sender {
+    if(point_map.empty())
+        return;
+    
     size_t point_id = [[[self.point_selector selectedItem] title] intValue];
     
     LabeledPoint point = point_map.at(point_id);
@@ -392,9 +445,19 @@ NSString *IMAGE_PATH = @"/Users/mrshiposha/Desktop/image.tga";
         0
     });
     
-    Cross cursor(point.position(), 5);
+    Cross cursor(point.position(), 6.0);
     current_cursor = &cursor;
     [self update_image];
     current_cursor = nullptr;
 }
+
+- (void)set_changes_controls_enabled: (BOOL)is_enabled {
+    [self.change_button setEnabled:is_enabled];
+    [self.remove_button setEnabled:is_enabled];
+    [self.solve_button setEnabled:is_enabled];
+    [self.point_selector setEnabled:is_enabled];
+    [self.x_field_change setEnabled:is_enabled];
+    [self.y_field_change setEnabled:is_enabled];
+}
+
 @end

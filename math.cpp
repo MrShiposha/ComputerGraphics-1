@@ -40,9 +40,6 @@ ginseng::graphics::Ring inscribed_circle(const ginseng::graphics::Triangle &tria
     auto side_1_vector = triangle.second_point() - triangle.first_point();
     auto side_2_vector = triangle.third_point() - triangle.first_point();
     
-    math::Line side_1(triangle.first_point(), side_1_vector);
-    
-    
     double cos_angle = (side_1_vector).dot(side_2_vector) / (side_1_vector.length()*side_2_vector.length());
     double sin_half_angle = sqrt((1 - cos_angle)/2);
     
@@ -76,17 +73,21 @@ bool is_all_points_on_same_line(const std::map<size_t, LabeledPoint> &point_map)
 std::tuple<graphics::Line, graphics::Line, graphics::Line>
 bisectors(const ginseng::graphics::Triangle &triangle)
 {
+    std::cout << triangle << std::endl;
+    std::cout << "DIRECTION_1: " << triangle.second_point() - triangle.first_point() << std::endl;
+    std::cout << "DIRECTION_2: " << triangle.third_point()  - triangle.second_point() << std::endl;
+    std::cout << "DIRECTION_3: " << triangle.first_point()  - triangle.third_point() << std::endl;
+    
     math::Line side_1(triangle.first_point(),  triangle.second_point() - triangle.first_point());
     math::Line side_2(triangle.second_point(), triangle.third_point()  - triangle.second_point());
     math::Line side_3(triangle.third_point(),  triangle.first_point()  - triangle.third_point());
     
     auto bisects_intersection = bisectors_intersection_point(triangle);
     
-    std::cout << triangle << std::endl;
     std::cout << "INTERSECTION: " << bisects_intersection << std::endl;
-    std::cout << "diff_1: " << bisects_intersection - triangle.first_point() << std::endl;
-    std::cout << "diff_2: " << bisects_intersection - triangle.second_point() << std::endl;
-    std::cout << "diff_3: " << bisects_intersection - triangle.third_point() << std::endl;
+    std::cout << "BIS_DIRECTION_1: " << bisects_intersection - triangle.first_point() << std::endl;
+    std::cout << "BIS_DIRECTION_2: " << bisects_intersection - triangle.second_point() << std::endl;
+    std::cout << "BIS_DIRECTION_3: " << bisects_intersection - triangle.third_point() << std::endl;
     
     math::Line bisect_1(triangle.first_point(),  bisects_intersection - triangle.first_point());
     math::Line bisect_2(triangle.second_point(), bisects_intersection - triangle.second_point());

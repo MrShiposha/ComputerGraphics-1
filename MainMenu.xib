@@ -91,14 +91,14 @@
         <window title="Лабораторная работа №1" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" frameAutosaveName="" animationBehavior="default" id="yRV-Hd-MBV" userLabel="Viewport">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" fullSizeContentView="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="109" y="132" width="1024" height="640"/>
+            <rect key="contentRect" x="109" y="132" width="780" height="800"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1280" height="778"/>
             <view key="contentView" id="cne-Zf-Od2">
-                <rect key="frame" x="0.0" y="0.0" width="1024" height="640"/>
+                <rect key="frame" x="0.0" y="0.0" width="780" height="800"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Al7-XR-xIc">
-                        <rect key="frame" x="0.0" y="0.0" width="1024" height="620"/>
+                        <rect key="frame" x="0.0" y="0.0" width="780" height="780"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="rOH-tV-gtM"/>
                     </imageView>

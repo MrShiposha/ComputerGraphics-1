@@ -17,21 +17,22 @@ LabeledPoint::LabeledPoint(const ginseng::math::Vector2D &position, const std::s
 : Point(position), label(label)
 {}
 
-void LabeledPoint::draw(DrawDevice &device, const Color &color) const
+void LabeledPoint::draw(DrawDevice &device) const
 {
     constexpr unsigned int FONT_WIDTH = 11;
     constexpr unsigned int FONT_HEIGHT = 18;
     
     constexpr double LABEL_OFFSET = 7.;
     
-    Point::draw(device, color);
+    Point::draw(device);
     
     TextView
     (
      {position().x() + LABEL_OFFSET, position().y() + LABEL_OFFSET},
      ginseng::util::Font("Times New Roman", {FONT_WIDTH, FONT_HEIGHT}),
      label
-    ).draw(device, Color::rgba(255, 255, 255));
+    ).color(Color::rgba(255, 255, 255))
+     .draw(device);
 }
 
 void LabeledPoint::set_label(const std::string &label)

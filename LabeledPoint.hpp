@@ -15,7 +15,7 @@ class LabeledPoint : public ginseng::graphics::Point
 public:
     LabeledPoint(const ginseng::math::Vector2D &position, const std::string &label);
     
-    virtual void draw(ginseng::graphics::DrawDevice &, const ginseng::graphics::Color &) const override;
+    virtual void draw(ginseng::graphics::DrawDevice &) const override;
     
     void set_label(const std::string &);
     

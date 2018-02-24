@@ -51,6 +51,28 @@ ginseng::graphics::Ring inscribed_circle(const ginseng::graphics::Triangle &tria
     return graphics::Ring(bisects_intersection, radius);
 }
 
+bool is_triangle_degenerate(const ginseng::graphics::Triangle &triangle)
+{
+    return math::Line(triangle.first_point(), triangle.second_point() - triangle.first_point())
+            .is_contains(triangle.third_point());
+}
+
+bool is_all_points_on_same_line(const std::map<size_t, LabeledPoint> &point_map)
+{
+    if(point_map.size() < 3)
+        return true;
+    
+    std::cout << "!!!!" << std::endl;
+    auto it = point_map.begin(), end = point_map.end();
+    
+    math::Line line(it->second.position(), (++it)->second.position() - point_map.begin()->second.position());
+    for(; it != end; ++it)
+        if(!line.is_contains(it->second.position()))
+            return false;
+    
+    return true;
+}
+
 std::tuple<graphics::Line, graphics::Line, graphics::Line>
 bisectors(const ginseng::graphics::Triangle &triangle)
 {
@@ -60,13 +82,23 @@ bisectors(const ginseng::graphics::Triangle &triangle)
     
     auto bisects_intersection = bisectors_intersection_point(triangle);
     
-    math::Line bisect_1(triangle.first_point(),  bisects_intersection - triangle.first_point() );
+    std::cout << triangle << std::endl;
+    std::cout << "INTERSECTION: " << bisects_intersection << std::endl;
+    std::cout << "diff_1: " << bisects_intersection - triangle.first_point() << std::endl;
+    std::cout << "diff_2: " << bisects_intersection - triangle.second_point() << std::endl;
+    std::cout << "diff_3: " << bisects_intersection - triangle.third_point() << std::endl;
+    
+    math::Line bisect_1(triangle.first_point(),  bisects_intersection - triangle.first_point());
     math::Line bisect_2(triangle.second_point(), bisects_intersection - triangle.second_point());
     math::Line bisect_3(triangle.third_point(),  bisects_intersection - triangle.third_point());
     
-    auto bisect_1_end = math::lines_intersection_point(bisect_1, side_2).round();
-    auto bisect_2_end = math::lines_intersection_point(bisect_2, side_3).round();
-    auto bisect_3_end = math::lines_intersection_point(bisect_3, side_1).round();
+    auto bisect_1_end = bisect_1.intersection(side_2).round();
+    auto bisect_2_end = bisect_2.intersection(side_3).round();
+    auto bisect_3_end = bisect_3.intersection(side_1).round();
+    
+    std::cout << "1? = " << std::boolalpha << bisect_1.is_contains(bisects_intersection) << " // " << bisect_1.is_contains(triangle.first_point()) << std::endl;
+    std::cout << "2? = " << std::boolalpha << bisect_2.is_contains(bisects_intersection) << " // " << bisect_2.is_contains(triangle.second_point()) << std::endl;
+    std::cout << "3? = " << std::boolalpha << bisect_3.is_contains(bisects_intersection) << " // " << bisect_3.is_contains(triangle.third_point()) << std::endl;
     
     return std::make_tuple
     (

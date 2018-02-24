@@ -54,7 +54,7 @@ NSString *IMAGE_PATH = @"/Users/mrshiposha/Desktop/image.tga";
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
     kx = ky = 1.0;
-    padding = 100;
+    padding = 110;
     
     offset_x = 0;
     offset_y = 0;
@@ -146,7 +146,7 @@ NSString *IMAGE_PATH = @"/Users/mrshiposha/Desktop/image.tga";
     {
         image->draw(*min_bisector, Color::rgba(0, 255, 255));
         image->draw(*min_inscribed_circle, Color::rgba(0, 255, 255));
-        image->draw(graphics::Point(min_inscribed_circle->center()), Color::rgba(255, 255, 0));
+        image->draw(graphics::Point(min_inscribed_circle->position()), Color::rgba(255, 255, 0));
     }
     
     for(auto &&pair : point_map)
@@ -252,7 +252,7 @@ NSString *IMAGE_PATH = @"/Users/mrshiposha/Desktop/image.tga";
     
     [self set_changes_controls_enabled:YES];
     
-    if(point_map.size() < 3)
+    if(is_all_points_on_same_line(point_map))
         [self.solve_button setEnabled:NO];
 }
 
@@ -281,7 +281,7 @@ NSString *IMAGE_PATH = @"/Users/mrshiposha/Desktop/image.tga";
     if(point_map.empty())
         [self set_changes_controls_enabled:NO];
     
-    if(point_map.size() < 3)
+    if(is_all_points_on_same_line(point_map))
         [self.solve_button setEnabled:NO];
     
     [self update_image];
@@ -378,12 +378,15 @@ NSString *IMAGE_PATH = @"/Users/mrshiposha/Desktop/image.tga";
 
     auto it = triangles.begin(), end = triangles.end(), min_it = triangles.begin();
 
-    double min_length = get_max_bisector(bisectors(*it)).length();
+    double min_length = 0;
     double new_length = 0;
     for(++it; it != end; ++it)
     {
+        if(is_triangle_degenerate(*it))
+            continue;
+        
         new_length = get_max_bisector(bisectors(*it)).length();
-        if (new_length < min_length)
+        if (new_length < min_length || min_length == 0)
         {
             min_length = new_length;
             min_it = it;
@@ -395,21 +398,18 @@ NSString *IMAGE_PATH = @"/Users/mrshiposha/Desktop/image.tga";
     ({
         (triangle->first_point().x() - offset_x)*kx + offset_x + padding,
         (triangle->first_point().y() - offset_y)*ky + offset_y + padding,
-        0
     });
     
     triangle->second_point
     ({
         (triangle->second_point().x() - offset_x)*kx + offset_x + padding,
         (triangle->second_point().y() - offset_y)*ky + offset_y + padding,
-        0
     });
     
     triangle->third_point
     ({
         (triangle->third_point().x() - offset_x)*kx + offset_x + padding,
         (triangle->third_point().y() - offset_y)*ky + offset_y + padding,
-        0
     });
     
     triangle->first_point(triangle->first_point().rounded());
@@ -421,7 +421,7 @@ NSString *IMAGE_PATH = @"/Users/mrshiposha/Desktop/image.tga";
     min_bisector = &min;
     
     Ring ring(inscribed_circle(*triangle));
-    ring.center(ring.center().rounded());
+    ring.position(ring.position().rounded());
     
     min_inscribed_circle = &ring;
     

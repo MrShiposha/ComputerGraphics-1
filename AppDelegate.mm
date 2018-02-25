@@ -28,10 +28,11 @@ NSString *IMAGE_PATH = @"/Users/mrshiposha/Desktop/image.tga";
     graphics::Ring *min_inscribed_circle;
     Cross *current_cursor;
     
-    double kx, ky;
-    double padding;
-    double offset_x;
-    double offset_y;
+    math::Transforms transforms;
+    math::Translate  offset;
+    math::Translate  restore;
+    math::Translate  padding;
+    math::Scale      scale;
 }
 
 
@@ -53,11 +54,15 @@ NSString *IMAGE_PATH = @"/Users/mrshiposha/Desktop/image.tga";
 
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
-    kx = ky = 1.0;
-    padding = 170;
+//    padding = 170;
     
-    offset_x = 0;
-    offset_y = 0;
+    padding = Translate::dxy(170, 170);
+    
+    transforms
+        << offset
+        << scale
+        << restore
+        << padding;
     
     triangle = nullptr;
     min_bisector = nullptr;
@@ -120,48 +125,52 @@ NSString *IMAGE_PATH = @"/Users/mrshiposha/Desktop/image.tga";
         double up_down_diff = up->second.position().y() - down->second.position().y();
         
         if(right_left_diff != 0)
-            kx = (image->size().width  - 2*padding)/right_left_diff;
+            scale.x() = (image->size().width  - 2*padding.x())/right_left_diff;
         else
-            kx = 1;
+            scale.x() = 1;
         
         if(up_down_diff != 0)
-            ky = (image->size().height - 2*padding)/up_down_diff;
+            scale.y() = (image->size().height - 2*padding.y())/up_down_diff;
         else
-            ky = 1;
+            scale.y() = 1;
         
-        offset_x = left->second.position().x();
-        offset_y = down->second.position().y();
-
+        offset = Translate::dxy(-left->second.position().x(), -down->second.position().y());
+        restore = -offset;
     }
     else
-        kx = ky = 1.0;
+        scale = Scale::kxy(1, 1);
+    
+    transforms.cache();
     
     if(triangle)
-    {
         image->draw(triangle->color(Color::rgba(0, 255, 0)));
-    }
     
     if(min_bisector)
     {
-        image->draw(min_bisector->color(Color::rgba(0, 255, 255)));
-        image->draw(min_inscribed_circle->color(Color::rgba(0, 255, 255)));
-        image->draw(graphics::Point(min_inscribed_circle->position()).color(Color::rgba(255, 255, 0)));
+        image->draw
+        (
+             min_bisector
+             ->color(Color::rgba(0, 255, 255))
+        );
+        image->draw
+        (
+             min_inscribed_circle
+             ->color(Color::rgba(0, 255, 255))
+        );
+        image->draw
+        (
+             graphics::Point(min_inscribed_circle->position())
+             .color(Color::rgba(255, 255, 0))
+        );
     }
     
     for(auto &&pair : point_map)
     {
-        std::cout << "x: " << (pair.second.position().x() - offset_x)*kx + offset_x + padding << ", y: " << (pair.second.position().y() - offset_y)*ky + offset_y + padding << std::endl;
-        
         image->draw
         (
             LabeledPoint(pair.second)
-                .position
-                ({
-                    (pair.second.position().x() - offset_x)*kx + offset_x + padding,
-                    (pair.second.position().y() - offset_y)*ky + offset_y + padding,
-                    0
-                })
                 .color(Color::rgba(255, 0, 0))
+                .transform(transforms)
         );
     }
     
@@ -360,7 +369,7 @@ NSString *IMAGE_PATH = @"/Users/mrshiposha/Desktop/image.tga";
     auto get_max_bisector = [](auto bisectors)
     {
         auto [a, b, c] = bisectors;
-        
+    
         auto a_length = a.length();
         auto b_length = b.length();
         auto c_length = c.length();
@@ -381,12 +390,13 @@ NSString *IMAGE_PATH = @"/Users/mrshiposha/Desktop/image.tga";
 
     double min_length = 0;
     double new_length = 0;
-    for(++it; it != end; ++it)
+    for(; it != end; ++it)
     {
         if(is_triangle_degenerate(*it))
             continue;
         
         new_length = get_max_bisector(bisectors(*it)).length();
+        std::cout << new_length << " <> " << min_length << std::endl;
         if (new_length < min_length || min_length == 0)
         {
             min_length = new_length;
@@ -394,30 +404,15 @@ NSString *IMAGE_PATH = @"/Users/mrshiposha/Desktop/image.tga";
         }
     }
     
+    std::cout << "MIN LENGTH = " << min_length << std::endl;
+    
     triangle = &*min_it;
-    
-    triangle->first_point
-    ({
-        (triangle->first_point().x() - offset_x)*kx + offset_x + padding,
-        (triangle->first_point().y() - offset_y)*ky + offset_y + padding,
-    });
-    
-    triangle->second_point
-    ({
-        (triangle->second_point().x() - offset_x)*kx + offset_x + padding,
-        (triangle->second_point().y() - offset_y)*ky + offset_y + padding,
-    });
-    
-    triangle->third_point
-    ({
-        (triangle->third_point().x() - offset_x)*kx + offset_x + padding,
-        (triangle->third_point().y() - offset_y)*ky + offset_y + padding,
-    });
-    
-    triangle->first_point(triangle->first_point().rounded());
-    triangle->second_point(triangle->second_point().rounded());
-    triangle->third_point(triangle->third_point().rounded());
-    triangle->color(Color::rgba(0, 255, 0));
+    triangle->transform(transforms);
+    triangle
+        ->first_point(triangle->first_point().rounded())
+        .second_point(triangle->second_point().rounded())
+        .third_point(triangle->third_point().rounded())
+        .color(Color::rgba(0, 255, 0));
     
     try
     {
@@ -448,14 +443,8 @@ NSString *IMAGE_PATH = @"/Users/mrshiposha/Desktop/image.tga";
         return;
     
     size_t point_id = [[[self.point_selector selectedItem] title] intValue];
-    
-    LabeledPoint point = point_map.at(point_id);
-    point.position
-    ({
-        (point.position().x() - offset_x)*kx + offset_x + padding,
-        (point.position().y() - offset_y)*ky + offset_y + padding,
-        0
-    });
+    auto point = point_map.at(point_id);
+    point.transform(transforms);
     
     Cross cursor(point.position(), 6.0);
     current_cursor = &cursor;

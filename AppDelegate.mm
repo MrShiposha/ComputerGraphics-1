@@ -134,6 +134,16 @@ NSString *IMAGE_PATH = @"/Users/mrshiposha/Desktop/image.tga";
         else
             scale.y() = 1;
         
+        if(is_equal(scale.x(), 1))
+            scale.x() = scale.y();
+        else if(is_equal(scale.y(), 1))
+            scale.y() = scale.x();
+        else
+        {
+            double min = std::min(scale.x(), scale.y());
+            scale = Scale::kxy(min, min);
+        }
+        
         offset = Translate::dxy(-left->second.position().x(), -down->second.position().y());
         restore = -offset;
     }
@@ -363,7 +373,10 @@ NSString *IMAGE_PATH = @"/Users/mrshiposha/Desktop/image.tga";
         }
         
         if(it_2_begin != it_2_border)
-            ++it_2_begin;
+        {
+            it_3_begin = ++it_2_begin;
+            ++it_3_begin;
+        }
     }
     
     auto get_max_bisector = [](auto bisectors)
